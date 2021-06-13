@@ -157,5 +157,5 @@ https://towardsdatascience.com/master-the-coco-dataset-for-semantic-image-segmen
 - cityscapes: https://www.cityscapes-dataset.com/dataset-overview/#features
 - VOC2007: https://pjreddie.com/media/files/VOC2007_doc.pdf
 - VOC2012: https://pjreddie.com/media/files/VOC2012_doc.pdf
-- Albumentations : https://albumentations.ai/docs/examples/pytorch_classification/
+- Albumentations : https://albumentations.ai/docs/getting_started/mask_augmentation/
 - pytorch-lightning : https://pytorch-lightning.readthedocs.io/en/latest/

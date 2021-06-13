@@ -117,6 +117,8 @@ The Cityscapes Dataset focuses on semantic understanding of urban street scenes.
 * **tensorflow-gpu 2.2.0**
 * **tensorboard 2.5.0** 
 * **pytorch-lightning 1.2.6**
+* **albumentations 0.5.2**
+
 
 ## Usage
 ### 0. Prepare the dataset

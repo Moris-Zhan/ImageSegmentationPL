@@ -4,6 +4,16 @@ My Frame work for Image Semantic Segmentation with pytorch Lightning + Albumenta
 I organizize the object detection algorithms proposed in recent years, and focused on **`Cityscapes`**, **`COCO`** , **`Pascal VOC`** and **`BDD100K`** Dataset.
 This frame work also include **`EarlyStopping mechanism`**.
 
+### Status
+- [x] DataSet
+- [x] Training/Validiation Step
+- [x] TensorBoardLogger callback
+- [x] ModelCheckpoint callback
+- [x] Learning Rate Monitor
+- [x] GPUStats Monitor
+- [x] Early stop callback
+- [x] Read Best model path
+- [ ] Lightning with Argument Parser
 
 ## Datasets:
 

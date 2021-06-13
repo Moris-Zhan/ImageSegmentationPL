@@ -1,13 +1,13 @@
 # ImageSegmentation
 My Frame work for Image Semantic Segmentation with pytorch Lightning + Albumentations
 ## Overview
-I organizize the object detection algorithms proposed in recent years, and focused on **`Cityscapes`**, **`COCO`** and **`Pascal VOC`** Dataset.
+I organizize the object detection algorithms proposed in recent years, and focused on **`Cityscapes`**, **`COCO`** , **`Pascal VOC`** and **`BDD100K`** Dataset.
 This frame work also include **`EarlyStopping mechanism`**.
 
 
 ## Datasets:
 
-I used 3 different datases: **`Cityscapes`, `COCO`, `Pascal VOC`** . Statistics of datasets I used for experiments is shown below
+I used 3 different datases: **`Cityscapes`, `COCO`, `Pascal VOC`** and **`BDD100K`**. Statistics of datasets I used for experiments is shown below
 
 - **VOC**:
   Download the voc images and annotations from [VOC2007](http://host.robots.ox.ac.uk/pascal/VOC/voc2007) or [VOC2012](http://host.robots.ox.ac.uk/pascal/VOC/voc2012). Make sure to put the files as the following structure:
@@ -92,47 +92,63 @@ The Cityscapes Dataset focuses on semantic understanding of urban street scenes.
 
 
 
-## Methods
+## Semantic Segmentation Models - based on LightningModule
 - **FPN**
 - **FCN**
 - **DeConvNet**
 - **UNet**
 - **SegNet**
-- **PSPNet (some err..)**
+- **PSPNet**
 - **DeepLabV3**
 - **DeepLabv3_plus**
 
 ## Prerequisites
 * **Windows 10**
-* **CUDA 10.1 (lower versions may work but were not tested)**
-* **NVIDIA GPU 1660 + CuDNN v7.3**
+* **CUDA 10.2**
+* **NVIDIA GPU 1660 + CuDNN v7.605**
 * **python 3.6.9**
-* **pytorch 1.10**
-* **opencv (cv2)**
-* **numpy**
-* **torchvision 0.4**
+* **pytorch 1.81**
+* **opencv-python 4.1.1.26**
+* **numpy 1.19.5**
+* **torchvision 0.9**
+* **torchsummary 1.5.1**
+* **Pillow 7.2.0**
+* **dlib==19.21**
+* **tensorflow-gpu 2.2.0**
+* **tensorboard 2.5.0** 
+* **pytorch-lightning 1.2.6**
 
 ## Usage
 ### 0. Prepare the dataset
 * **Download custom dataset in the  `data_paths`.** 
 * **And create custom dataset `custom_dataset.py` in the `dataset`.**
 
-### 1. Train + Evaluate
+### Execute (Train/Val + Test)
+
+#### Cityscape
 ```python
-python train.py --model DeepLabv3_plus --dataset Pascal --batch_size 4 --n_gpu 1
+python run.py --use CityscapeModule --model DeepLabv3_plus
+```
+#### VOC
+```python
+python run.py --use VOCModule --model DeepLabv3_plus
+```
+#### COCO
+```python
+python run.py --use COCOModule --model DeepLabv3_plus
+```
+#### BDD100K
+```python
+python run.py --use BDD100KModule --model DeepLabv3_plus
 ```
 
-### 2. Predict
-```python
-python predict.py --model PSPNet --experiment_dir "run\Cityscapes\PSPNet\experiment_10"
-```
 
 ## Reference
 - U-Net :  https://github.com/milesial/Pytorch-UNet/blob/master/unet/unet_model.py
 - SegNet : https://github.com/Charmve/Semantic-Segmentation-PyTorch/blob/7095051118c79c322df8b98ab4e59caeb61c57a0/models/seg_net.py
 - DeconvNet:   https://github.com/renkexinmay/SemanticSegmentation-FCN-DeconvNet/blob/master/model.py
 - FCN: https://github.com/pochih/FCN-pytorch/blob/master/python/fcn.py
-- PSPNet: https://github.com/PhanTom2003/PSPnet/blob/master/PSPnet.py
+- PSPNet: https://github.com/Lextal/pspnet-pytorch/blob/4eb6ab61287e837f5e2d8c1ae09fadeaa0e31e37/pspnet.py
 - DeepLabV3: https://github.com/fregu856/deeplabv3/blob/master/model/deeplabv3.py
 - DeepLabv3_plus : https://github.com/MLearing/Pytorch-DeepLab-v3-plus/blob/master/networks/deeplab_resnet.py
 - Dataset Preprare: https://github.com/jfzhang95/pytorch-deeplab-xception/tree/master/dataloaders/datasets
@@ -141,3 +157,5 @@ https://towardsdatascience.com/master-the-coco-dataset-for-semantic-image-segmen
 - cityscapes: https://www.cityscapes-dataset.com/dataset-overview/#features
 - VOC2007: https://pjreddie.com/media/files/VOC2007_doc.pdf
 - VOC2012: https://pjreddie.com/media/files/VOC2012_doc.pdf
+- Albumentations : https://albumentations.ai/docs/examples/pytorch_classification/
+- pytorch-lightning : https://pytorch-lightning.readthedocs.io/en/latest/

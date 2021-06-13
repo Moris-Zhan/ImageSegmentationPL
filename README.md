@@ -1,5 +1,5 @@
 # ImageSegmentation
-My Frame work for ImageSegmentation
+My Frame work for Image Semantic Segmentation with pytorch Lightning + Albumentations
 ## Overview
 I organizize the object detection algorithms proposed in recent years, and focused on **`Cityscapes`, `COCO` and `Pascal VOC` Dataset.
 This frame work also include **`EarlyStopping mechanism`**.

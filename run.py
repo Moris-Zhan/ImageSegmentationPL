@@ -48,9 +48,9 @@ if __name__ == '__main__':
     logger = TensorBoardLogger(root_dir, name= model.checkname, default_hp_metric =False )
 
     checkpoint_callback = ModelCheckpoint(
-        monitor='Loss/Val', 
+        monitor='val_loss', 
         dirpath= os.path.join(root_dir, model.checkname), 
-        filename= model.checkname + '-{epoch:02d}-{Loss/Val:.2f}',
+        filename= model.checkname + '-{epoch:02d}-{val_loss:.2f}',
         save_top_k=3,
         mode='min',
         verbose=True
@@ -58,7 +58,7 @@ if __name__ == '__main__':
     setattr(model, "checkpoint_callback", checkpoint_callback)
     
     early_stop_callback = EarlyStopping(
-        monitor='Loss/Val',
+        monitor='val_loss',
         min_delta=0.00,
         patience=3,
         verbose=False,
@@ -68,7 +68,7 @@ if __name__ == '__main__':
     lr_monitor = LearningRateMonitor(logging_interval="epoch")
     gpu_stats = GPUStatsMonitor() 
 
-    trainer = Trainer(max_epochs = 2, gpus=-1, auto_select_gpus=True,precision=16,
+    trainer = Trainer(max_epochs = 10, gpus=-1, auto_select_gpus=True,precision=16,
                     logger=logger, num_sanity_val_steps=0, 
                     # weights_summary='full', 
                     auto_scale_batch_size = 'power', # only open when find batch_num

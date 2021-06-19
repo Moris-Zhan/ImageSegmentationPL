@@ -19,10 +19,7 @@ def training_step(self, batch, batch_idx):
     predicted = np.argmax(out.clone().detach().data.cpu().numpy(), axis=1)
     self.prepare_matrix(y.clone().detach().cpu().numpy(), predicted)
 
-    values = {'Loss/Train': loss}
-    self.log_dict(values, logger=True, on_epoch=False)
     self.logger.experiment.add_scalars("Loss/Step", {"Train":loss}, self.global_step)
-
     return {'loss':loss}
 
     
@@ -33,14 +30,11 @@ def training_epoch_end(self, outputs): # 在Validation的一個Epoch結束後，
     self.confusion_matrix = np.zeros((self.num_classes,) * 2)   
 
     self.logger.experiment.add_scalars("Loss/Epoch", {"Train":avg_loss}, self.current_epoch)
+
     self.logger.experiment.add_scalars("Accuracy/Acc_normal", {"Train":avg_train_Acc}, self.current_epoch)  
     self.logger.experiment.add_scalars("Accuracy/Acc_class", {"Train":avg_train_Acc_class}, self.current_epoch)  
     self.logger.experiment.add_scalars("Accuracy/mIoU", {"Train":avg_train_mIoU}, self.current_epoch)  
     self.logger.experiment.add_scalars("Accuracy/FWIoU", {"Train":avg_train_FWIoU}, self.current_epoch)
-    # opt = self.optimizers()
-    # self.logger.experiment.add_scalar("epoch/LR",
-    #                                 get_lr(opt),
-    #                                 self.current_epoch)
 
     if(self.current_epoch==1):    
         self.logger.experiment.add_graph(self, self.sampleImg)
@@ -73,21 +67,24 @@ def validation_step(self, batch, batch_idx):
     pred_rgb = pred_rgb[0].cpu().numpy().transpose((1, 2, 0))*255
     pred_rgb = cv2.resize(pred_rgb, dsize=(512, 256), interpolation=cv2.INTER_LINEAR)
     pred_rgb = np.add(orign_img*ratio , pred_rgb*(1 - ratio))
-    values = {'Loss/Val':loss}
-    self.log_dict(values, logger=True, on_epoch=True)
-    self.logger.experiment.add_scalars("Loss/Step", {"Val":loss}, self.global_step)
 
-    return {'loss':loss, "orign_img": torch.from_numpy(orign_img/255).type(torch.FloatTensor), \
+    # loss
+    values = {'val_loss':loss}
+    self.log_dict(values, logger=True, on_epoch=True)
+
+    return {'val_loss':loss, "orign_img": torch.from_numpy(orign_img/255).type(torch.FloatTensor), \
             "pred_img":torch.from_numpy(pred_rgb/255).type(torch.FloatTensor) }
             
 
 
 def validation_epoch_end(self, outputs): # 在Validation的一個Epoch結束後，計算平均的Loss及Acc.
-    avg_loss = torch.stack([x['loss'] for x in outputs]).mean()
+    avg_loss = torch.stack([x['val_loss'] for x in outputs]).mean()
     avg_Val_Acc, avg_Val_Acc_class, avg_Val_mIoU, avg_Val_FWIoU = self.generate_score()
     self.confusion_matrix = np.zeros((self.num_classes,) * 2)
 
     self.logger.experiment.add_scalars("Loss/Epoch", {"Val":avg_loss}, self.current_epoch)
+    self.logger.experiment.add_scalars("Loss/Step", {"Val":avg_loss}, self.global_step)
+
     self.logger.experiment.add_scalars("Accuracy/Acc_normal", {"Val":avg_Val_Acc}, self.current_epoch)  
     self.logger.experiment.add_scalars("Accuracy/Acc_class", {"Val":avg_Val_Acc_class}, self.current_epoch)  
     self.logger.experiment.add_scalars("Accuracy/mIoU", {"Val":avg_Val_mIoU}, self.current_epoch)  

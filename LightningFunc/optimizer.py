@@ -11,7 +11,7 @@ def configure_optimizers(self, mode = 'sgd'):
     return {
         'optimizer': optimizer,
         'lr_scheduler': ReduceLROnPlateau(optimizer, mode='max', patience=3, threshold = 0.9),
-        'monitor': 'Loss/Val'
+        'monitor': 'val_loss'
     }
 
 def get_lr(optimizer):

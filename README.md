@@ -13,7 +13,8 @@ This frame work also include **`EarlyStopping mechanism`**.
 - [x] GPUStats Monitor
 - [x] Early stop callback
 - [x] Read Best model path
-- [ ] Lightning with Argument Parser
+- [x] Lightning with Argument Parser
+- [x] Yaml custom config
 
 ## Datasets:
 

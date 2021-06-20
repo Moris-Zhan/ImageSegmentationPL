@@ -1,8 +1,3 @@
-# import os
-# from argparse import ArgumentParser
-
-from unicodedata import name
-
 from pytorch_lightning import Trainer
 from pytorch_lightning.loggers import TensorBoardLogger
 from pytorch_lightning.callbacks import ModelCheckpoint, LearningRateMonitor, GPUStatsMonitor
@@ -24,24 +19,56 @@ from dataset.Pascal import VOCModule
 from dataset.Coco import COCOModule
 from dataset.BDD100K import BDD100KModule
 
+import yaml
+import argparse
+
+def load_config(args):
+    with open(args.config) as f:
+        config = yaml.load(f, Loader=yaml.FullLoader)
+        for key, value in config.items():
+            if isinstance(value, dict):
+                for inside_key, inside_key_value in value.items():
+                    setattr(args, inside_key, inside_key_value)
+            else:
+                setattr(args, key, value)
+    return args
+
+def load_data(args):
+    dm = None
+    if args.data_module == "CityscapeModule": dm = CityscapeModule(batch_size= args.batch_size)
+    elif args.data_module == "VOCModule": dm = VOCModule(batch_size= args.batch_size)
+    elif args.data_module == "COCOModule": dm = COCOModule(batch_size= args.batch_size)
+    elif args.data_module == "BDD100KModule": dm = BDD100KModule(batch_size= args.batch_size)
+    dm.setup(args.stage)
+    return dm
+
+def load_model(args, dm):
+    model = None
+    if args.model_name == "DeConvNet": model = DeConvNet(dm.get_classes(), args)
+    elif args.model_name == "PSPNet": model = PSPNet(dm.get_classes(), args)
+    elif args.model_name == "UNet": model = UNet(dm.get_classes(), args)
+    elif args.model_name == "FCN32s": model = FCN32s(dm.get_classes(), args)
+    elif args.model_name == "FPN": model = FPN(dm.get_classes(), args)
+    elif args.model_name == "SegNet": model = SegNet(dm.get_classes(), args)
+    elif args.model_name == "DeepLabV3": model = DeepLabV3(dm.get_classes(), args)
+    elif args.model_name == "DeepLabv3_plus": model = DeepLabv3_plus(dm.get_classes(), args)
+
+    return model
+
 if __name__ == '__main__':
-    # dm = CityscapeModule(bsz=2)
-    # dm = VOCModule(bsz=2)
-    # dm = COCOModule(bsz=2)
-    dm = BDD100KModule(bsz=2)
-    dm.setup('fit')  
+    # Parse command line arguments.
+    parser = argparse.ArgumentParser()
+    add_arg = parser.add_argument
+    add_arg('config', nargs='?', default='configs/config.yaml',
+            help='YAML configuration file')
+    args = parser.parse_args()
 
-    
-    # model = DeConvNet(dm.get_classes(), dm.name)
-    # model = PSPNet(dm.get_classes(), dm.name)
-    model = UNet(dm.get_classes(), dm.name)
-    # model = FCN32s(dm.get_classes(), dm.name)
-    # model = FPN(dm.get_classes(), dm.name)
-    # model = SegNet(dm.get_classes(), dm.name)
-    # model = DeepLabV3(dm.get_classes(), dm.name)
-    # model = DeepLabv3_plus(dm.get_classes(), dm.name)
+    # Load configuration
+    config = load_config(args)
+    dm = load_data(args)
+    model = load_model(args, dm)
 
-    setattr(model, "learning_rate", 1e-3)
+    # setattr(model, "learning_rate", 1e-3)
     model.read_Best_model_path()
 
     root_dir = os.path.join('log_dir',dm.name)
@@ -68,19 +95,13 @@ if __name__ == '__main__':
     lr_monitor = LearningRateMonitor(logging_interval="epoch")
     gpu_stats = GPUStatsMonitor() 
 
-    trainer = Trainer(max_epochs = 10, gpus=-1, auto_select_gpus=True,precision=16,
-                    logger=logger, num_sanity_val_steps=0, 
-                    # weights_summary='full', 
-                    auto_scale_batch_size = 'power', # only open when find batch_num
-                    auto_lr_find=True,
-                    accumulate_grad_batches=8,  # random error with (could not broadcast input array from shape)
-                    callbacks=[checkpoint_callback, early_stop_callback, lr_monitor, gpu_stats],
-                    limit_train_batches=100,
-                    limit_val_batches=100,
-                    limit_test_batches = 100
-                    )
+    trainer = Trainer.from_argparse_args(config, 
+                                        callbacks=[checkpoint_callback, early_stop_callback, lr_monitor, gpu_stats],
+                                        logger=logger)
                     
-    # trainer.tune(model, datamodule=dm)
+    if args.tune:
+        trainer.tune(model, datamodule=dm)
+
     trainer.fit(model, datamodule=dm)
 
     dm.setup('test') 

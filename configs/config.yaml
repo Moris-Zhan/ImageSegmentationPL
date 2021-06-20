@@ -1,0 +1,56 @@
+data:
+    data_module: BDD100KModule
+    # n_train: 32768 #50000
+    # n_valid: 8192 #10000
+    batch_size: 2
+    stage: 'fit'
+    test: True
+    view_mark: False
+
+model:
+    model_name: DeepLabv3_plus
+
+loss:
+    criterion: CrossEntropyLoss
+    # criterion: FocalLoss
+
+optimizer:
+    optimizer: Adam # [Adam, Adagrad, RMSprop, SGD]
+    lr: 1.0e-3 
+    lr_decay: 0
+    lr_scheduler: ReduceLROnPlateau # [ReduceLROnPlateau, StepLR, MultiStepLR, ExponentialLR, CosineAnnealingLR, LambdaLR, CyclicLR]
+    patience: 3
+    threshold: 0.9
+    momentum: 0
+    weight_decay: 1.0e-5
+    alpha: 0.95
+    betas: [0.1, 0.5]
+
+metrics:
+    acc: Accuracy
+
+training:
+    max_epochs: 100
+    n_epochs: 100
+    accumulate_grad_batches: 8
+
+validation:
+
+testing: 
+
+trainer:    
+    gpus: -1
+    auto_select_gpus: True
+    num_sanity_val_steps: 0
+
+fitune:
+    tune: False
+    auto_lr_find: True
+    auto_scale_batch_size: power
+   
+yaml_test:    
+    # max_epochs: 2
+    # n_epochs: 4
+    # limit_train_batches: 5
+    # limit_val_batches: 5
+    # limit_test_batches: 5

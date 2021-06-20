@@ -53,7 +53,7 @@ def validation_step(self, batch, batch_idx):
     self.prepare_matrix(y.clone().detach().cpu().numpy(), predicted)
 
     # show result
-    pred_rgb = decode_seg_map_sequence(predicted, self.data_name)   
+    pred_rgb = decode_seg_map_sequence(predicted, self.args.data_module)   
 
     orign_img = np.array(x[0].cpu(), dtype=np.float64)   
     orign_img = orign_img.transpose((1, 2, 0))
@@ -116,7 +116,7 @@ def test_step(self, batch, batch_idx): #定義 Test 階段
     self.prepare_matrix(y.clone().detach().cpu().numpy(), predicted)
 
     # show result
-    pred_rgb = decode_seg_map_sequence(predicted, self.data_name)   
+    pred_rgb = decode_seg_map_sequence(predicted, self.args.data_module)   
 
     orign_img = np.array(x[0].cpu(), dtype=np.float64)    
     orign_img = orign_img.transpose((1, 2, 0))
@@ -146,7 +146,7 @@ def test_step(self, batch, batch_idx): #定義 Test 階段
         
 
 def test_epoch_end(self, outputs): # 在test的一個Epoch結束後，計算平均的Loss及Acc.
-    # if self.data_name not in ["Cityscapes"]:
+    # if self.args.data_module not in ["Cityscapes"]:
     avg_Test_Acc, avg_Test_Acc_class, avg_Test_mIoU, avg_Test_FWIoU = self.generate_score()
     self.confusion_matrix = np.zeros((self.num_classes,) * 2)
 

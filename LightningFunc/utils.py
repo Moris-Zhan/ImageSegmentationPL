@@ -37,7 +37,7 @@ def read_Best_model_path(self):
         print("\nLoad best_model_path : %s \n"% best_model_path)
         self.load_from_checkpoint(checkpoint_path=best_model_path, 
                                     num_classes=self.num_classes, 
-                                    data_name=self.data_name,
+                                    args=self.args,
                                     map_location='cpu')
         best_model_file.close()    
     else:
@@ -83,13 +83,13 @@ def decode_segmap(label_mask, dataset, plot=False):
     Returns:
         (np.ndarray, optional): the resulting decoded color image.
     """
-    if dataset == 'VOC' or dataset == 'Coco':
+    if dataset == 'VOCModule' or dataset == 'COCOModule':
         n_classes = 21
         label_colours = get_pascal_labels()
-    elif dataset == 'Cityscapes':
+    elif dataset == 'CityscapeModule':
         n_classes = 19
         label_colours = get_cityscapes_labels()
-    elif dataset == 'BDD100K':
+    elif dataset == 'BDD100KModule':
         n_classes = 41
         label_colours = get_bdd100k_labels()
     else:

@@ -47,7 +47,7 @@ def predict_image(image, model):
         face = face.permute(2, 0, 1).unsqueeze(0).cuda()
         # model = torch.load('run\SCUT\pre_googlenet\experiment_6\pre_googlenet.pkl')
         # model.load_state_dict(torch.load('run\SCUT\pre_googlenet\experiment_6\checkpoint.pth.tar')['state_dict'])
-        outputs = model(face) # [bsz, c, h, w]
+        outputs = model(face) # [batch_size, c, h, w]
         _, predicted = torch.max(outputs.data, 1)
         score = int(predicted.item()) * 20
         return score

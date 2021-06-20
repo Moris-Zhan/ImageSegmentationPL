@@ -110,17 +110,17 @@ class ASPP(nn.Module):
         return out
 
 class DeepLabV3(pl.LightningModule):
-    def __init__(self, num_classes, data_name):
+    def __init__(self, num_classes, args):
         super(DeepLabV3, self).__init__()
 
         self.num_classes = num_classes
         self.__build_model()
         self.__build_func(DeepLabV3)       
-        self.criterion = configure_loss('ce')
+        self.args = args    
+        self.criterion = configure_loss(self.args.criterion)        
 
-        self.checkname = self.name + self.backbone
-        self.data_name = data_name
-        self.dir = os.path.join("log_dir", self.data_name ,self.checkname) 
+        self.checkname = self.backbone
+        self.dir = os.path.join("log_dir", self.args.data_module ,self.checkname) 
         self.confusion_matrix = np.zeros((self.num_classes,) * 2)
         self.sample = (8, 3, 512, 256)
         self.sampleImg=torch.rand((1,3, 512, 256)).cuda()

@@ -201,11 +201,11 @@ class DatasetFromSubset(Dataset):
         return len(self.subset)
 
 class COCOModule(pl.LightningDataModule):
-    def __init__(self, bsz, base_size = 256, crop_size = 64):
+    def __init__(self, batch_size, base_size = 256, crop_size = 64):
         super().__init__()
         base_size = 512
         crop_size = 512
-        self.batch_size = bsz
+        self.batch_size = batch_size
         self.base_size = base_size
         self.crop_size = crop_size
         self.name = "Coco"
